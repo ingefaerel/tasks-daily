@@ -1,0 +1,109 @@
+.App {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 20px;
+}
+
+body {
+  background-color: rgb(226, 226, 226);
+}
+h1 {
+  margin: 50px auto;
+  color: #ffffff;
+}
+
+p {
+  color: #ffffff;
+}
+
+.professional {
+  background-color: aqua;
+}
+.date {
+  font-size: 24px;
+}
+
+.arrows button {
+  font-size: 24px;
+  padding: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+}
+
+.arrows button:nth-child(1) {
+  left: 0;
+}
+
+.arrows button:nth-child(2) {
+  right: 0;
+}
+
+.areas {
+  display: flex;
+
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.area {
+  background-color: #ffffff;
+  width: 200px;
+  margin: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.subcategory {
+  margin-top: 20px;
+}
+
+.checklist {
+  margin-top: 10px;
+}
+
+.task {
+  margin: 5px 0;
+}
+
+.done-today {
+  margin-top: 30px;
+  background-color: #ffffff;
+}
+
+.done-area {
+  margin: 10px 0;
+}
+
+.calendars {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+/* .calendar {
+  width: 100px;
+} */
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  margin: 10px;
+}
+
+.calendar-day {
+  padding: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.calendar-day.completed {
+  background-color: green;
+  color: white;
+  font-weight: bold;
+}
