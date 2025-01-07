@@ -16,48 +16,150 @@ const areas = [
   {
     name: "physical",
     subcategories: [
-      { name: "Exercise", items: ["Yoga", "Cardio", "Running", "Strength"] },
-      { name: "Sleep", items: ["8 hours", "Nap", "Rest"] },
-      { name: "Beauty", items: ["Skincare", "Haircare"] },
-      { name: "Food", items: ["Healthy meal", "Water intake", "Snacks"] },
+      { name: "Exercise", items: ["yoga", "cardio", ">=8000 steps"] },
+      {
+        name: "Sleep",
+        items: [
+          "8 hours last night",
+          "go to sleep before 1am",
+          "no smoking 1h before bed",
+        ],
+      },
+      {
+        name: "Beauty",
+        items: [
+          "extra morning skincare",
+          "extra evening skincare",
+          "IPL - legs",
+          "IPL - bikini",
+          "haircare",
+        ],
+      },
+      {
+        name: "Food",
+        items: [
+          "cook a healthy meal",
+          "fast 12h",
+          "fast 16h",
+          "eat enough veggies",
+        ],
+      },
     ],
   },
   {
     name: "intellectual",
     subcategories: [
-      { name: "Reading", items: ["Book 1", "Book 2", "Article"] },
-      { name: "Studying", items: ["Course 1", "Course 2"] },
-      { name: "Learning", items: ["Skill 1", "Skill 2"] },
+      {
+        name: "Music",
+        items: [
+          "discover new music",
+          "learn about genres",
+          "read/watch reviews",
+          "learn about classics",
+          "learn a new term",
+          "learn music theory",
+          "learn about production",
+        ],
+      },
+      {
+        name: "Reading",
+        items: [
+          "read any book",
+          "read a classic book",
+          "watch/read book reviews",
+          "discover new/old authors",
+          "learn advanced English",
+        ],
+      },
+      { name: "Logic", items: ["sudoku", "puzzles", "computer science"] },
     ],
   },
   {
     name: "mental",
     subcategories: [
-      { name: "Meditation", items: ["Morning", "Evening"] },
-      { name: "Relaxation", items: ["Deep breathing", "Visualization"] },
-      { name: "Journaling", items: ["Morning entry", "Evening entry"] },
+      {
+        name: "Journal",
+        items: [
+          "explore topics from list",
+          "write what bothers you",
+          "summarize the day",
+        ],
+      },
+      {
+        name: "ChatGpt",
+        items: ["explore topics from list", "write what bothers you"],
+      },
+      {
+        name: "Experience IRL",
+        items: [
+          "apply previously gathered knowledge",
+          "control the outburst before it happens",
+        ],
+      },
     ],
   },
   {
     name: "social",
     subcategories: [
-      { name: "Meetings", items: ["Friend", "Family"] },
-      { name: "Calls", items: ["Call mom", "Call friend"] },
+      {
+        name: "Reach out",
+        items: ["reach out to friends", "reach out to family"],
+      },
+      {
+        name: "ChatGpt",
+        items: ["explore topics from list", "write what bothers you"],
+      },
     ],
   },
   {
     name: "professional",
     subcategories: [
-      { name: "Work tasks", items: ["Task 1", "Task 2"] },
-      { name: "Meetings", items: ["Team meeting", "Client meeting"] },
+      {
+        name: "Udemy",
+        items: ["testerCourse", "C# Course", "any other course"],
+      },
+      {
+        name: "Practice",
+        items: ["interview questions", "udemy tasks", "problems"],
+      },
+      {
+        name: "Project",
+        items: ["PortfolioWeb", "TasksDaily", "ImageEditor", "any other"],
+      },
     ],
   },
   {
     name: "creative",
     subcategories: [
-      { name: "Drawing", items: ["Sketching", "Coloring"] },
-      { name: "Writing", items: ["Story", "Blog"] },
-      { name: "Music", items: ["Practice", "Listen"] },
+      {
+        name: "Music",
+        items: [
+          "dexterity (scales/exercises)",
+          "ear training",
+          "play known songs",
+          "new thing (technique/riffs)",
+          "fretboard/how guitar works",
+        ],
+      },
+      {
+        name: "Writing",
+        items: [
+          "Journal creatively",
+          "short story",
+          "read a book",
+          "learn about CW",
+        ],
+      },
+      {
+        name: "Singing",
+        items: [
+          "singing exercises",
+          "teacher",
+          "part of a song (make notes)",
+          "learn about singing",
+          "sing in front of others",
+        ],
+      },
     ],
   },
 ];
@@ -84,7 +186,7 @@ function App() {
       const formattedDate = format(date, "yyyy-MM-dd");
       const tasksForDate = completedTasksByDate[formattedDate];
 
-      if (!tasksForDate) return; // Exit if no tasks for the date
+      if (!tasksForDate) return;
 
       for (const area of Object.keys(tasksForDate)) {
         for (const subcategory of Object.keys(tasksForDate[area])) {
@@ -103,7 +205,18 @@ function App() {
                 }));
               }
             } catch (err) {
-              console.error(`Error fetching note for task "${task}":`, err);
+              if (err.response?.status === 404) {
+                // Handle missing note (e.g., leave it as an empty string)
+                setNotes((prevNotes) => ({
+                  ...prevNotes,
+                  [formattedDate]: {
+                    ...(prevNotes[formattedDate] || {}),
+                    [task]: "",
+                  },
+                }));
+              } else {
+                console.error(`Error fetching note for task "${task}":`, err);
+              }
             }
           }
         }
@@ -356,25 +469,27 @@ function App() {
 
       <div className="done-today">
         <h2>Done today</h2>
-        {areas.map((area) => (
-          <div key={area.name} className="done-area">
-            <h3>{area.name}</h3>
-            <ul>
-              {filterCompletedTasks(area).map(({ task, subcategory }) => (
-                <li key={task}>
-                  {`${subcategory}: ${task}`}
-                  <input
-                    type="text"
-                    value={notes[format(date, "yyyy-MM-dd")]?.[task] || ""}
-                    onChange={(e) => handleNoteChange(task, e.target.value)}
-                    placeholder="Enter your note"
-                  />
-                  <button onClick={() => handleSaveNote(task)}>Save</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        <div className="done-areas">
+          {areas.map((area) => (
+            <div key={area.name} className="done-area">
+              <h3>{area.name}</h3>
+              <ul>
+                {filterCompletedTasks(area).map(({ task, subcategory }) => (
+                  <li key={task}>
+                    {`${subcategory}: ${task}`}
+                    <input
+                      type="text"
+                      value={notes[format(date, "yyyy-MM-dd")]?.[task] || ""}
+                      onChange={(e) => handleNoteChange(task, e.target.value)}
+                      placeholder="Enter your note"
+                    />
+                    <button onClick={() => handleSaveNote(task)}>Save</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="calendars">

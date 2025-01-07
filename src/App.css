@@ -5,7 +5,7 @@
 }
 
 body {
-  background-color: rgb(226, 226, 226);
+  background-color: rgb(248, 248, 248);
 }
 h1 {
   margin: 50px auto;
@@ -50,7 +50,7 @@ p {
 
 .area {
   background-color: #ffffff;
-  width: 200px;
+
   margin: 10px;
   border: 1px solid #ddd;
   padding: 10px;
@@ -59,6 +59,9 @@ p {
 
 .subcategory {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  text-wrap: wrap;
 }
 
 .checklist {
@@ -76,6 +79,10 @@ p {
 
 .done-area {
   margin: 10px 0;
+}
+
+.done-areas {
+  display: flex;
 }
 
 .calendars {
