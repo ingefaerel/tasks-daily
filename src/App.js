@@ -11,6 +11,8 @@ import {
 import "./App.css";
 import api from "./axios"; // Axios instance
 
+import { jsPDF } from "jspdf";
+
 // Areas related to tasks
 const areas = [
   {
@@ -377,18 +379,24 @@ function App() {
     }));
   };
 
-  const handleSaveNote = async (task) => {
+  const handleSaveNote = async (task, area) => {
     const formattedDate = format(date, "yyyy-MM-dd");
     const taskNote = notes[formattedDate]?.[task] || "";
 
+    if (!taskNote.trim()) {
+      console.warn("Note is empty. Nothing to save.");
+      return;
+    }
+
     try {
-      // Save the note to the backend
-      await api.post("/tasks/note", {
+      const response = await api.post("/tasks/note", {
         date: formattedDate,
+        area, // ✅ Ensure area is passed correctly
         task,
         note: taskNote,
       });
-      console.log("Note updated successfully");
+
+      console.log(response.data.message); // Success message from backend
     } catch (err) {
       console.error("Error saving note:", err);
     }
@@ -466,6 +474,49 @@ function App() {
     });
 
     return completedItems;
+  };
+
+  const handleExportToPDF = () => {
+    const doc = new jsPDF();
+    const formattedDate = format(date, "yyyy-MM-dd");
+    const fileName = `tasks_done_${formattedDate}.pdf`;
+
+    // Set the title for the PDF
+    doc.setFontSize(16);
+    doc.text(`Tasks Completed on ${formattedDate}`, 10, 10);
+
+    // Start position on the page
+    let yPosition = 20;
+
+    // Iterate through each area
+    areas.forEach((area) => {
+      const completedTasks = filterCompletedTasks(area);
+      if (completedTasks.length > 0) {
+        // Add area name
+        doc.setFontSize(14);
+        doc.text(area.name, 10, yPosition);
+        yPosition += 10;
+
+        // Add tasks and notes under this area
+        completedTasks.forEach(({ task, subcategory }) => {
+          // Task details
+          doc.setFontSize(12);
+          doc.text(`- ${subcategory}: ${task}`, 15, yPosition);
+          yPosition += 8;
+
+          // Task notes
+          const taskNote = notes[formattedDate]?.[task];
+          if (taskNote) {
+            doc.setFontSize(10);
+            doc.text(`  Note: ${taskNote}`, 20, yPosition);
+            yPosition += 8;
+          }
+        });
+      }
+    });
+
+    // Save the PDF with the date in the filename
+    doc.save(fileName);
   };
 
   return (
@@ -559,7 +610,7 @@ function App() {
                       onFocus={() => handleNoteFocus(task)} // Trigger on focus
                       onChange={(e) => handleNoteChange(task, e.target.value)}
                       onBlur={() => {
-                        handleSaveNote(task); // Save the note when focus is lost
+                        handleSaveNote(task, area.name); // Save the note when focus is lost
                         setActiveTextArea(null); // Clear active textarea
                       }}
                     ></textarea>
@@ -567,7 +618,7 @@ function App() {
                     {activeTextArea === task && (
                       <button
                         className="save"
-                        onClick={() => handleSaveNote(task)}
+                        onClick={() => handleSaveNote(task, area.name)}
                       >
                         Save
                       </button>
@@ -603,6 +654,10 @@ function App() {
           </div>
         ))}
       </div>
+
+      <button onClick={handleExportToPDF} className="export-pdf">
+        Export to PDF
+      </button>
     </div>
   );
 }
