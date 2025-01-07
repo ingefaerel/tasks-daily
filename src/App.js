@@ -14,7 +14,7 @@ import api from "./axios"; // Axios instance
 // Areas related to tasks
 const areas = [
   {
-    name: "physical",
+    name: "Physical",
     subcategories: [
       { name: "Exercise", items: ["yoga", "cardio", ">=8000 steps"] },
       {
@@ -47,7 +47,7 @@ const areas = [
     ],
   },
   {
-    name: "intellectual",
+    name: "Intellectual",
     subcategories: [
       {
         name: "Music",
@@ -75,7 +75,7 @@ const areas = [
     ],
   },
   {
-    name: "mental",
+    name: "Mental",
     subcategories: [
       {
         name: "Journal",
@@ -99,10 +99,10 @@ const areas = [
     ],
   },
   {
-    name: "social",
+    name: "Social",
     subcategories: [
       {
-        name: "Reach out",
+        name: "ReachOut",
         items: ["reach out to friends", "reach out to family"],
       },
       {
@@ -112,7 +112,7 @@ const areas = [
     ],
   },
   {
-    name: "professional",
+    name: "Professional",
     subcategories: [
       {
         name: "Udemy",
@@ -129,7 +129,7 @@ const areas = [
     ],
   },
   {
-    name: "creative",
+    name: "Creative",
     subcategories: [
       {
         name: "Music",
@@ -144,7 +144,7 @@ const areas = [
       {
         name: "Writing",
         items: [
-          "Journal creatively",
+          "journal creatively",
           "short story",
           "read a book",
           "learn about CW",
@@ -166,12 +166,12 @@ const areas = [
 
 // Areas related to calendar
 const calAreas = [
-  "physical",
-  "intellectual",
-  "mental",
-  "social",
-  "professional",
-  "creative",
+  "Physical",
+  "Intellectual",
+  "Mental",
+  "Social",
+  "Professional",
+  "Creative",
 ];
 
 function App() {
@@ -180,6 +180,12 @@ function App() {
   const [completedTasksByDate, setCompletedTasksByDate] = useState({});
   const [selectedDays, setSelectedDays] = useState({});
   const [notes, setNotes] = useState({});
+
+  const [activeTextArea, setActiveTextArea] = useState(null);
+
+  const handleNoteFocus = (task) => {
+    setActiveTextArea(task); // Mark textarea as active
+  };
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -388,6 +394,19 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".note")) {
+        setActiveTextArea(); // Clear the active textarea when clicking outside
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleChangeDate = (direction) => {
     let newDate = new Date(date);
     if (direction === 1) {
@@ -452,8 +471,19 @@ function App() {
   return (
     <div className="App">
       <div className="header">
-        <h1 className="title">Daily tracker</h1>
+        {/* <h1 className="title">TasksDaily</h1> */}
         <p className="date"> Today is {formatDate(date)}</p>
+        <div className="navbar">
+          <span>
+            <a href="#areas">areas</a>
+          </span>
+          <span>
+            <a href="#done-today">done</a>{" "}
+          </span>
+          <span>
+            <a href="#calendars">calendars</a>{" "}
+          </span>
+        </div>
       </div>
 
       <div className="arrows">
@@ -461,67 +491,87 @@ function App() {
         <button onClick={() => handleChangeDate(1)}>→</button>
       </div>
 
-      <div className="areas">
+      <div id="areas" className="areas">
         {areas.map((area) => (
-          <div className="area" key={area.name}>
-            <h2>{area.name}</h2>
-            {area.subcategories.map((subcategory) => (
-              <div key={subcategory.name} className="subcategory">
-                <h3>{subcategory.name}</h3>
-                <div className="checklist">
-                  {subcategory.items.map((item) => (
-                    <div key={item} className="task">
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={
-                            completedTasksByDate[format(date, "yyyy-MM-dd")]?.[
-                              area.name
-                            ]?.[subcategory.name]?.includes(item) || false
-                          }
-                          onChange={() =>
-                            handleTaskCompletion(
-                              area.name,
-                              subcategory.name,
-                              item
-                            )
-                          }
-                        />
-                        {item}
-                      </label>
-                    </div>
-                  ))}
+          <div className={area.name} key={area.name}>
+            <h2 className="area-name">{area.name}</h2>{" "}
+            <div className="area-list">
+              {area.subcategories.map((subcategory) => (
+                <div key={subcategory.name} className="subcategory">
+                  <h3 className="subCategory-name">{subcategory.name}</h3>
+                  <div className="checklist">
+                    {subcategory.items.map((item) => (
+                      <div key={item} className="task">
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={
+                              completedTasksByDate[
+                                format(date, "yyyy-MM-dd")
+                              ]?.[area.name]?.[subcategory.name]?.includes(
+                                item
+                              ) || false
+                            }
+                            onChange={() =>
+                              handleTaskCompletion(
+                                area.name,
+                                subcategory.name,
+                                item
+                              )
+                            }
+                          />
+                          <span> {item}</span>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="done-today">
+      <div id="done-today" className="done-today">
         <h2>Done today</h2>
         <div className="done-areas">
           {areas.map((area) => (
-            <div key={area.name} className="done-area">
-              <h3>{area.name}</h3>
-              <ul>
+            <div key={area.name} className={area.name}>
+              <h3 className="area-name">{area.name}</h3>
+              <ul className="done-tasks">
                 {filterCompletedTasks(area).map(({ task, subcategory }) => (
                   <li key={task}>
-                    {`${subcategory}: ${task}`}
-                    <input
-                      type="text"
-                      value={notes[format(date, "yyyy-MM-dd")]?.[task] || ""}
-                      onChange={(e) => handleNoteChange(task, e.target.value)}
-                      placeholder="Enter your note"
-                    />
-                    <button onClick={() => handleSaveNote(task)}>Save</button>
+                    <span className="done-task">
+                      <strong>{subcategory}</strong>: {task}
+                    </span>
                     <button
+                      className="delete"
                       onClick={() =>
                         handleTaskCompletion(area.name, subcategory, task, true)
                       }
                     >
-                      Delete
+                      ❌
                     </button>
+                    <textarea
+                      className="note"
+                      type="text"
+                      value={notes[format(date, "yyyy-MM-dd")]?.[task] || ""}
+                      onFocus={() => handleNoteFocus(task)} // Trigger on focus
+                      onChange={(e) => handleNoteChange(task, e.target.value)}
+                      onBlur={() => {
+                        handleSaveNote(task); // Save the note when focus is lost
+                        setActiveTextArea(null); // Clear active textarea
+                      }}
+                    ></textarea>
+
+                    {activeTextArea === task && (
+                      <button
+                        className="save"
+                        onClick={() => handleSaveNote(task)}
+                      >
+                        Save
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -530,10 +580,10 @@ function App() {
         </div>
       </div>
 
-      <div className="calendars">
+      <div id="calendars" className="calendars">
         {calAreas.map((calArea) => (
           <div key={calArea} className="calendar">
-            <h3>{calArea} Calendar</h3>
+            <h3>{calArea}</h3>
             <div className="calendar-grid">
               {monthDays.map((day) => {
                 const dayFormatted = format(day, "yyyy-MM-dd");

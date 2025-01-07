@@ -1,32 +1,61 @@
 .App {
-  font-family: Arial, sans-serif;
+  font-family: "Lato", serif;
+  font-weight: 400;
+  font-style: normal;
   text-align: center;
-  margin: 20px;
 }
 
 body {
   background-color: rgb(248, 248, 248);
-}
-h1 {
-  margin: 50px auto;
-  color: #ffffff;
+  margin: 100px 0;
+  box-sizing: border-box;
 }
 
-p {
-  color: #ffffff;
-}
-
-.professional {
-  background-color: aqua;
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgb(115, 141, 214);
 }
 .date {
-  font-size: 24px;
+  padding: 20px 0;
+  margin: 0;
+  color: #ffffff;
+  font-size: 25px;
+  font-weight: 500;
+}
+/* .title {
+  padding: 20px 0;
+  margin: 0;
+  color: #ffffff;
+  text-align: start;
+} */
+
+.navbar {
+  position: absolute;
+  top: 30px;
+  right: 20px;
 }
 
+.navbar span {
+  padding: 10px;
+}
+
+a {
+  color: #ffffff;
+}
+
+a:hover {
+  color: #f1d3d3;
+}
 .arrows button {
+  background-color: rgb(115, 141, 214);
   font-size: 24px;
   padding: 10px;
-  position: absolute;
+  position: fixed;
+  border: none;
+  color: white;
   top: 50%;
   transform: translateY(-50%);
   z-index: 100;
@@ -40,6 +69,11 @@ p {
   right: 0;
 }
 
+.area-list {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 0 0 20px 20px;
+}
 .areas {
   display: flex;
 
@@ -48,24 +82,88 @@ p {
   margin-top: 20px;
 }
 
-.area {
-  background-color: #ffffff;
-
+.areas .Physical,
+.areas .Professional,
+.areas .Mental,
+.areas .Social,
+.areas .Intellectual,
+.areas .Creative {
   margin: 10px;
   border: 1px solid #ddd;
-  padding: 10px;
-  border-radius: 20px;
+  min-width: 200px;
+  width: 250px;
+  height: fit-content;
+  border-radius: 22px;
 }
 
-.subcategory {
-  margin-top: 20px;
+.Physical {
+  background-color: #684397;
+}
+.Professional {
+  background-color: #384e75;
+}
+.Mental {
+  background-color: #204e23;
+}
+.Intellectual {
+  background-color: #ffc400;
+}
+.Creative {
+  background-color: #d36451;
+}
+.Social {
+  background-color: #e782bd;
+}
+
+.Subcategory {
   display: flex;
   flex-direction: column;
   text-wrap: wrap;
+  padding: 0 10px;
 }
 
+.subCategory-name {
+  margin: 0;
+  font-size: small;
+  text-align: start;
+  color: rgb(99, 99, 99);
+  padding: 5px;
+}
+
+.area-name {
+  color: white;
+  margin: 10px;
+}
 .checklist {
-  margin-top: 10px;
+  text-align: start;
+  text-wrap: wrap;
+}
+
+input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: #3aa13a; /* Changes the color of the checkbox */
+  cursor: pointer;
+  border: 2px solid #ccc;
+  border-radius: 4px; /* Makes it slightly rounded */
+}
+
+input[type="checkbox"]:checked {
+  border-color: #3aa13a;
+  background-color: #3aa13a;
+}
+
+.checklist .task label {
+  display: flex;
+  align-items: center; /* Vertically aligns the text with the checkbox */
+  gap: 5px; /* Adds spacing between the checkbox and the text */
+  cursor: pointer; /* Changes the cursor to indicate the label is clickable */
+}
+
+.checklist .task label span {
+  padding: 5px 0; /* Adds padding between the lines of text and checkbox */
+
+  color: #333; /* Text color */
 }
 
 .task {
@@ -73,28 +171,88 @@ p {
 }
 
 .done-today {
+  margin: 0 auto;
+  padding: 20px;
   margin-top: 30px;
-  background-color: #ffffff;
+
+  width: 1000px;
 }
 
 .done-area {
   margin: 10px 0;
 }
 
+.done-tasks {
+  list-style: none;
+  padding: 0;
+}
+
+.done-tasks li {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+  position: relative;
+  background-color: white;
+}
 .done-areas {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
+.done-task {
+  font-size: 20px;
+  padding: 10px;
+}
+
+.done-areas .Physical,
+.done-areas .Professional,
+.done-areas .Mental,
+.done-areas .Social,
+.done-areas .Intellectual,
+.done-areas .Creative {
+  padding: 20px;
+}
+
+.note {
+  display: block;
+  border-radius: 5px;
+  width: 450px;
+  border: none;
+  background-color: #ffffff4b;
+  margin: 10px 0;
+  margin-left: 10px;
+}
+
+.save {
+  width: 80px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  margin-left: 380px;
+}
+
+.delete {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
 .calendars {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   margin-top: 30px;
-  flex-wrap: wrap;
+
+  padding: 100px;
 }
 
-/* .calendar {
-  width: 100px;
-} */
+.calendar {
+}
 
 .calendar-grid {
   display: grid;
