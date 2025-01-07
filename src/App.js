@@ -287,9 +287,40 @@ function App() {
     fetchClickedDates(); // Fetch clicked dates on initial load
   }, []); // Run once when the component mounts (no dependency on `area`)
 
-  const handleTaskCompletion = async (area, subcategory, item) => {
+  const handleTaskCompletion = async (
+    area,
+    subcategory,
+    item,
+    deleteTask = false
+  ) => {
     const newCompletedTasksByDate = { ...completedTasksByDate };
     const formattedDate = format(date, "yyyy-MM-dd");
+
+    if (deleteTask) {
+      // Handle task deletion
+      try {
+        await api.delete(`/tasks`, {
+          data: { date: formattedDate, area, subcategory, item },
+        });
+
+        // Remove task from state
+        newCompletedTasksByDate[formattedDate][area][subcategory] =
+          newCompletedTasksByDate[formattedDate][area][subcategory].filter(
+            (task) => task !== item
+          );
+
+        if (
+          newCompletedTasksByDate[formattedDate][area][subcategory].length === 0
+        ) {
+          delete newCompletedTasksByDate[formattedDate][area][subcategory];
+        }
+
+        setCompletedTasksByDate(newCompletedTasksByDate);
+      } catch (err) {
+        console.error("Error deleting task:", err);
+      }
+      return;
+    }
 
     if (!newCompletedTasksByDate[formattedDate]) {
       newCompletedTasksByDate[formattedDate] = {};
@@ -484,6 +515,13 @@ function App() {
                       placeholder="Enter your note"
                     />
                     <button onClick={() => handleSaveNote(task)}>Save</button>
+                    <button
+                      onClick={() =>
+                        handleTaskCompletion(area.name, subcategory, task, true)
+                      }
+                    >
+                      Delete
+                    </button>
                   </li>
                 ))}
               </ul>
