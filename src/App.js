@@ -13,12 +13,20 @@ import api from "./axios"; // Axios instance
 
 import { jsPDF } from "jspdf";
 
-// Areas related to tasks
+// Areas
 const areas = [
   {
     name: "Physical",
     subcategories: [
-      { name: "Exercise", items: ["yoga", "cardio", ">=8000 steps"] },
+      {
+        name: "Exercise",
+        items: ["yoga", "cardio", ">=8000 steps"],
+        tooltips: [
+          "standard, new short adrien, new long adrien",
+          "10 mins dancing cardio, actual cardio on YT, jumping rope",
+          "go on a walk",
+        ],
+      },
       {
         name: "Sleep",
         items: [
@@ -26,6 +34,7 @@ const areas = [
           "go to sleep before 1am",
           "no smoking 1h before bed",
         ],
+        tooltips: ["jhwejkfhw", "jhfjshfjh", "olololo"],
       },
       {
         name: "Beauty",
@@ -36,6 +45,7 @@ const areas = [
           "IPL - bikini",
           "haircare",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "Food",
@@ -45,6 +55,7 @@ const areas = [
           "fast 16h",
           "eat enough veggies",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
     ],
   },
@@ -56,24 +67,30 @@ const areas = [
         items: [
           "discover new music",
           "learn about genres",
-          "read/watch reviews",
+          "read or watch reviews",
           "learn about classics",
           "learn a new term",
           "learn music theory",
           "learn about production",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "Reading",
         items: [
           "read any book",
           "read a classic book",
-          "watch/read book reviews",
-          "discover new/old authors",
+          "watch or read book reviews",
+          "discover new or old authors",
           "learn advanced English",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
-      { name: "Logic", items: ["sudoku", "puzzles", "computer science"] },
+      {
+        name: "Logic",
+        items: ["sudoku", "puzzles", "computer science"],
+        tooltips: ["sd", "jfff", "trolololo"],
+      },
     ],
   },
   {
@@ -86,10 +103,12 @@ const areas = [
           "write what bothers you",
           "summarize the day",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "ChatGpt",
         items: ["explore topics from list", "write what bothers you"],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "Experience IRL",
@@ -97,6 +116,7 @@ const areas = [
           "apply previously gathered knowledge",
           "control the outburst before it happens",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
     ],
   },
@@ -106,10 +126,12 @@ const areas = [
       {
         name: "ReachOut",
         items: ["reach out to friends", "reach out to family"],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "ChatGpt",
         items: ["explore topics from list", "write what bothers you"],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
     ],
   },
@@ -119,14 +141,17 @@ const areas = [
       {
         name: "Udemy",
         items: ["testerCourse", "C# Course", "any other course"],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "Practice",
         items: ["interview questions", "udemy tasks", "problems"],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "Project",
         items: ["PortfolioWeb", "TasksDaily", "ImageEditor", "any other"],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
     ],
   },
@@ -136,12 +161,13 @@ const areas = [
       {
         name: "Music",
         items: [
-          "dexterity (scales/exercises)",
+          "dexterity (scales or exercises)",
           "ear training",
           "play known songs",
-          "new thing (technique/riffs)",
+          "new thing (technique or riffs)",
           "fretboard/how guitar works",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "Writing",
@@ -151,6 +177,7 @@ const areas = [
           "read a book",
           "learn about CW",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
       {
         name: "Singing",
@@ -161,12 +188,12 @@ const areas = [
           "learn about singing",
           "sing in front of others",
         ],
+        tooltips: ["sd", "jfff", "trolololo"],
       },
     ],
   },
 ];
 
-// Areas related to calendar
 const calAreas = [
   "Physical",
   "Intellectual",
@@ -186,7 +213,7 @@ function App() {
   const [activeTextArea, setActiveTextArea] = useState(null);
 
   const handleNoteFocus = (task) => {
-    setActiveTextArea(task); // Mark textarea as active
+    setActiveTextArea(task);
   };
 
   useEffect(() => {
@@ -214,7 +241,6 @@ function App() {
               }
             } catch (err) {
               if (err.response?.status === 404) {
-                // Handle missing note (e.g., leave it as an empty string)
                 setNotes((prevNotes) => ({
                   ...prevNotes,
                   [formattedDate]: {
@@ -266,34 +292,31 @@ function App() {
       }
     };
 
-    fetchTasks(); // Call to fetch tasks based on `date`
-  }, [date]); // Depend on `date` to fetch the tasks for the specific date
+    fetchTasks();
+  }, [date]);
 
-  // New useEffect for fetching clicked dates (independent of date)
   useEffect(() => {
     const fetchClickedDates = async () => {
       try {
-        const clickedDays = {}; // Initialize the object to hold the clicked dates for all areas
+        const clickedDays = {};
 
-        // Loop over each calendar area and fetch the clicked dates
         for (const area of calAreas) {
-          const response = await api.get(`/api/calendar/${area}`); // Corrected route
+          const response = await api.get(`/api/calendar/${area}`);
           const clickedDates = response.data;
 
-          // Store clicked dates for the current area in a Set (for fast lookup)
           clickedDays[area] = new Set(
-            clickedDates.map((clickedDate) => clickedDate.date) // Ensure you only store the date
+            clickedDates.map((clickedDate) => clickedDate.date)
           );
         }
 
-        setSelectedDays(clickedDays); // Update state with clicked days for all areas
+        setSelectedDays(clickedDays);
       } catch (err) {
         console.error("Error fetching clicked dates:", err);
       }
     };
 
-    fetchClickedDates(); // Fetch clicked dates on initial load
-  }, []); // Run once when the component mounts (no dependency on `area`)
+    fetchClickedDates();
+  }, []);
 
   const handleTaskCompletion = async (
     area,
@@ -305,13 +328,11 @@ function App() {
     const formattedDate = format(date, "yyyy-MM-dd");
 
     if (deleteTask) {
-      // Handle task deletion
       try {
         await api.delete(`/tasks`, {
           data: { date: formattedDate, area, subcategory, item },
         });
 
-        // Remove task from state
         newCompletedTasksByDate[formattedDate][area][subcategory] =
           newCompletedTasksByDate[formattedDate][area][subcategory].filter(
             (task) => task !== item
@@ -352,7 +373,6 @@ function App() {
     } else {
       newCompletedTasksByDate[formattedDate][area][subcategory].push(item);
       try {
-        // Save the task to MongoDB
         await api.post("/tasks", {
           date: formattedDate,
           area,
@@ -391,12 +411,12 @@ function App() {
     try {
       const response = await api.post("/tasks/note", {
         date: formattedDate,
-        area, // ✅ Ensure area is passed correctly
+        area,
         task,
         note: taskNote,
       });
 
-      console.log(response.data.message); // Success message from backend
+      console.log(response.data.message);
     } catch (err) {
       console.error("Error saving note:", err);
     }
@@ -405,7 +425,7 @@ function App() {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".note")) {
-        setActiveTextArea(); // Clear the active textarea when clicking outside
+        setActiveTextArea();
       }
     };
 
@@ -418,10 +438,8 @@ function App() {
   const handleChangeDate = (direction) => {
     let newDate = new Date(date);
     if (direction === 1) {
-      // Move forward
       newDate = addDays(newDate, 1);
     } else {
-      // Move backward
       newDate = subDays(newDate, 1);
     }
     setDate(newDate);
@@ -481,30 +499,23 @@ function App() {
     const formattedDate = format(date, "yyyy-MM-dd");
     const fileName = `tasks_done_${formattedDate}.pdf`;
 
-    // Set the title for the PDF
     doc.setFontSize(16);
     doc.text(`Tasks Completed on ${formattedDate}`, 10, 10);
 
-    // Start position on the page
     let yPosition = 20;
 
-    // Iterate through each area
     areas.forEach((area) => {
       const completedTasks = filterCompletedTasks(area);
       if (completedTasks.length > 0) {
-        // Add area name
         doc.setFontSize(14);
         doc.text(area.name, 10, yPosition);
         yPosition += 10;
 
-        // Add tasks and notes under this area
         completedTasks.forEach(({ task, subcategory }) => {
-          // Task details
           doc.setFontSize(12);
           doc.text(`- ${subcategory}: ${task}`, 15, yPosition);
           yPosition += 8;
 
-          // Task notes
           const taskNote = notes[formattedDate]?.[task];
           if (taskNote) {
             doc.setFontSize(10);
@@ -515,7 +526,6 @@ function App() {
       }
     });
 
-    // Save the PDF with the date in the filename
     doc.save(fileName);
   };
 
@@ -551,7 +561,7 @@ function App() {
                 <div key={subcategory.name} className="subcategory">
                   <h3 className="subCategory-name">{subcategory.name}</h3>
                   <div className="checklist">
-                    {subcategory.items.map((item) => (
+                    {subcategory.items.map((item, index) => (
                       <div key={item} className="task">
                         <label>
                           <input
@@ -571,7 +581,13 @@ function App() {
                               )
                             }
                           />
-                          <span> {item}</span>
+
+                          <span className="tooltip">
+                            {item}
+                            <span className="tooltip-text">
+                              {subcategory.tooltips[index]}
+                            </span>
+                          </span>
                         </label>
                       </div>
                     ))}
@@ -607,11 +623,11 @@ function App() {
                       className="note"
                       type="text"
                       value={notes[format(date, "yyyy-MM-dd")]?.[task] || ""}
-                      onFocus={() => handleNoteFocus(task)} // Trigger on focus
+                      onFocus={() => handleNoteFocus(task)}
                       onChange={(e) => handleNoteChange(task, e.target.value)}
                       onBlur={() => {
-                        handleSaveNote(task, area.name); // Save the note when focus is lost
-                        setActiveTextArea(null); // Clear active textarea
+                        handleSaveNote(task, area.name);
+                        setActiveTextArea(null);
                       }}
                     ></textarea>
 

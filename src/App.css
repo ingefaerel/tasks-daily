@@ -142,10 +142,10 @@ a:hover {
 input[type="checkbox"] {
   width: 15px;
   height: 15px;
-  accent-color: #3aa13a; /* Changes the color of the checkbox */
+  accent-color: #3aa13a;
   cursor: pointer;
   border: 2px solid #ccc;
-  border-radius: 4px; /* Makes it slightly rounded */
+  border-radius: 4px;
 }
 
 input[type="checkbox"]:checked {
@@ -155,15 +155,15 @@ input[type="checkbox"]:checked {
 
 .checklist .task label {
   display: flex;
-  align-items: center; /* Vertically aligns the text with the checkbox */
-  gap: 5px; /* Adds spacing between the checkbox and the text */
-  cursor: pointer; /* Changes the cursor to indicate the label is clickable */
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
 }
 
 .checklist .task label span {
-  padding: 5px 0; /* Adds padding between the lines of text and checkbox */
+  padding: 5px 0;
 
-  color: #333; /* Text color */
+  color: #333;
 }
 
 .task {
@@ -205,6 +205,47 @@ input[type="checkbox"]:checked {
 .done-task {
   font-size: 20px;
   padding: 10px;
+}
+
+.tooltip {
+  position: relative;
+
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 150px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 125%;
+  left: 80%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  z-index: 10;
+}
+
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+  background-color: #333;
+  color: #fff;
+  visibility: visible;
+  opacity: 1;
 }
 
 .done-areas .Physical,
